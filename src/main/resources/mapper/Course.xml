@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CourseMapper">
+    <insert id="saveCollection" parameterType="java.util.HashMap">
+        insert into t_collection(userid,courseid,collectiondate) values (#{userid},#{courseid},#{collectiondate})
+    </insert>
+    <delete id="removeCollection" parameterType="java.util.HashMap">
+        delete from t_collection where userid = #{userid} and courseid = #{courseid}
+    </delete>
+
+    <select id="getlist" resultType="com.example.entity.Course">
+        select * from t_course ORDER BY RAND() limit 0,4
+    </select>
+    <select id="getCollection" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+        select count(*) from t_collection where userid = #{userid} and courseid = #{courseid}
+    </select>
+    <select id="getlistByCoachName" resultType="com.example.entity.Course">
+        select * from t_course where coach = #{coachname}
+    </select>
+    <select id="getAlllist" resultType="com.example.entity.Course">
+        select * from t_course
+    </select>
+    <select id="getCollectionbyUserId" resultType="java.util.Map">
+        select * from t_collection where userid = #{id}
+    </select>
+</mapper>

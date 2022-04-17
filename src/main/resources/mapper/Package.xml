@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.PackageMapper">
+
+    <select id="getCardDayByName" resultType="java.lang.Integer" parameterType="String">
+        select p.days from t_package p where p.packagetype = #{cardName}
+    </select>
+    <select id="getCardMoneyByName" resultType="java.math.BigDecimal">
+        select p.price from t_package p where p.packagetype = #{cardName}
+    </select>
+</mapper>

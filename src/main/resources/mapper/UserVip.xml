@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.UserVipMapper">
+
+    <select id="getUserVipeById" resultType="com.example.entity.UserVip">
+        select * from t_user_vip where id=#{id}
+    </select>
+    <select id="getnum" resultType="java.lang.Integer">
+        select count(*) as num from t_user_vip
+    </select>
+</mapper>

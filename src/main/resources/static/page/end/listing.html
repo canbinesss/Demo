@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>购物清单页</title>
+    <link rel="stylesheet" href="../../css/element.css">
+    <link rel="stylesheet" href="../../css/base.css">
+    <link rel="stylesheet" href="../../css/index2.css">
+    <style>
+        @import url("../../css/index.css");
+
+        .el-carousel__item h3 {
+            color: #475669;
+            font-size: 18px;
+            opacity: 0.75;
+            line-height: 300px;
+            margin: 0;
+        }
+
+        .el-carousel__item:nth-child(2n) {
+            background-color: #99a9bf;
+        }
+
+        .el-carousel__item:nth-child(2n+1) {
+            background-color: #d3dce6;
+        }
+
+        .el-row {
+            margin-bottom: 20px;
+        &
+        :last-child {
+            margin-bottom: 0;
+        }
+        }
+        .el-col {
+            border-radius: 4px;
+        }
+
+        .bg-purple-dark {
+            background: #99a9bf;
+        }
+
+        .bg-purple {
+            background: #d3dce6;
+        }
+
+        .bg-purple-light {
+            background: #e5e9f2;
+        }
+
+        .grid-content {
+            border-radius: 4px;
+            min-height: 36px;
+        }
+
+        .row-bg {
+            padding: 10px 0;
+            background-color: #f9fafc;
+        }
+        .el-header, .el-footer {
+            background-color: #B3C0D1;
+            color: #333;
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            background-color: #D3DCE6;
+            color: #333;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: center;
+            line-height: 160px;
+        }
+
+        body > .el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 320px;
+        }
+        .cart-e {
+            margin: 0 auto;
+            background: url("../../images/cart-empty_@2x.png") no-repeat;
+            width: 275px;
+            height: 300px;
+            color: #8d8d8d;
+        }
+        .titlecart{
+            padding-left: 30px;
+            position: relative;
+            z-index: 10;
+            height: 60px;
+            padding: 0 10px 0 24px;
+            border-bottom: 1px solid #d4d4d4;
+            border-radius: 8px 8px 0 0;
+            box-shadow: rgb(0 0 0 / 6%) 0 1px 7px;
+            background: #f3f3f3;
+            background: linear-gradient(#fbfbfb, #ececec);
+            line-height: 60px;
+            font-size: 18px;
+            color: #333;
+        }
+        .select .down[data-v-3b4edfda], .select .up[data-v-3b4edfda] {
+            background: url(/static/img/cart-updown_8303731e15@2x.7d9dac6.jpg) no-repeat;
+            overflow: hidden;
+            float: left;
+            width: 34px;
+            height: 37px;
+            background-size: 100% auto;
+            line-height: 40px;
+            text-indent: -9999em;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .item {
+            margin-top: 10px;
+            margin-right: 40px;
+        }
+    </style>
+</head>
+<body>
+<script src="../../js/echarts.min.js"></script>
+<script src="../../js/china.js"></script>
+<script src="../../js/jquery.min.js"></script>
+<script src="../../js/vue.min.js"></script>
+<script src="../../js/element.js"></script>
+<script src="../../js/address.js"></script>
+<div id="app">
+    <el-row :gutter="24">
+        <el-col :span="24" :offset="0">
+            <el-container>
+                <el-header style="line-height: 60px;padding: 0px">
+                    <el-header style="background-color: black; line-height: 60px; color: white;">
+                        <el-row>
+                            <el-col :span="4" :offset="20" style="text-align: right">
+                                <div v-if="!login">
+                                    <a href="/page/end/loginforuser.html">登录/注册</a>
+                                </div>
+                                <div v-else>
+                                    <span style="color: white; margin-right: 10px">{{user.username}}</span>
+                                    <el-dropdown>
+                                        <img :src=`${user.avatar}`
+                                             style="width: 40px; height: 40px; margin-right: 10px; border-radius: 50%">
+                                        <el-dropdown-menu slot="dropdown">
+                                            <a href="/page/end/mine.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">个人中心</a>
+                                            <br>
+                                            <a href="/page/end/vipmoney.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">会员充值/续费</a>
+                                            <br>
+                                            <a href="/page/end/uppassword.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">修改密码</a>
+                                            <a @click="logout" href="#" class="link_1"
+                                               style="display:block; width: 100px;  text-align: center; color: #000000">退出</a>
+                                        </el-dropdown-menu>
+                                    </el-dropdown>
+                                </div>
+
+                            </el-col>
+                        </el-row>
+                    </el-header>
+                </el-header>
+                <el-main style="line-height: 60px;padding: 0px">
+                    <el-menu
+                            style="line-height: 60px;padding-left: 130px"
+                            :default-active="activeIndex"
+                            class="el-menu-demo"
+                            mode="horizontal"
+                            @select="handleSelect"
+                            background-color="#545c64"
+                            text-color="#fff"
+                            active-text-color="#ffd04b">
+                        <el-menu-item index="1" @click="location.href= '/page/end/ind.html'">首页</el-menu-item>
+                        <el-menu-item index="2" @click="location.href= '/page/end/goodslist.html'">商品信息</el-menu-item>
+                        <el-menu-item index="3" @click="location.href= '/page/end/coachlist.html'">教练信息</el-menu-item>
+                        <el-menu-item index="4" @click="location.href= '/page/end/videolist.html'">课程信息</el-menu-item>
+                        <el-menu-item index="5" @click="location.href= '/page/end/community.html'">网络社区</el-menu-item>
+                    </el-menu>
+                </el-main>
+            </el-container>
+        </el-col>
+    </el-row>
+    <el-row :gutter="20">
+        <el-col :span="20" :offset="2">
+            请选择地址：
+            <el-cascader
+                    v-model="address1"
+                    :options="options"
+                    :props="{ expandTrigger: 'hover' }"
+                    @change=""></el-cascader>
+            <el-input style="width: 300px" v-model="address2" placeholder="请输入详细地址"></el-input>
+
+        </el-col>
+    </el-row>
+    <el-row :gutter="24">
+        <el-col :span="24" :offset="0">
+            <div v-if="isgoods" style="padding: 50px">
+                <el-container>
+                    <el-header style="line-height: 60px;padding-left: 20px;text-align: left;background-color: #00feff;" class="titlecart">
+                        <h1>商品清单</h1>
+                    </el-header>
+                    <el-main style="padding: 20px;line-height: 60px;text-align: left" >
+                        <template>
+                            <el-table
+                                    :data="ddinfo"
+                                    style="width: 100%;"
+                                    tooltip-effect="dark"
+                                    ref="multipleTable">
+                                <el-table-column
+                                        style="text-align: center"
+                                        prop="url"
+                                        label="商品图片"
+                                        width="180">
+                                    <template slot-scope="scope">
+                                        <img :src="'../..'+ddinfo[scope.$index].url" style="width: 100px"></img>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        prop="goodsname"
+                                        label="商品名称"
+                                        width="180">
+                                </el-table-column>
+                                <el-table-column
+                                        prop="price"
+                                        label="商品价格">
+                                </el-table-column>
+                                <el-table-column
+                                        prop="num"
+                                        label="购买数量">
+                                </el-table-column>
+                                <el-table-column
+                                        prop="xj"
+                                        label="小计">
+                                </el-table-column>
+                            </el-table>
+                            <div align="left" style="line-height: 60px;padding-left: 1200px">
+                               <h1> <div><span>总价格：{{checkPrice}}￥</span></div>
+                                <el-button @click="settlement" style="margin: 0px;line-height: 50px;width: 130px;height: 50px;padding-top: 1px;line-height: 50px;font-size: 16px;border: 1px solid #5c81e3;text-align: center;border-radius: 4px;font-size: 12px;color: #fff;background-color: #678ee7;background-image: linear-gradient(180deg, #678ee7, #5078df);" size="small">
+                                    <h1>现在结算</h1>
+                                </el-button></h1>
+                            </div>
+                        </template>
+                    </el-main>
+                </el-container>
+            </div>
+            <div v-else style="padding:50px">
+                <div class="cart-e">
+                </div>
+                <p style="text-align: center;padding: 20px;color: #8d8d8d">你的购物车空空如也</p>
+                <div style="text-align: center">
+                    <router-link to="/">
+                        <el-button > 现在去选购</el-button>
+                    </router-link>
+                </div>
+            </div>
+        </el-col>
+    </el-row>
+
+    <el-row :gutter="20">
+        <el-col :span="24" :offset="0">
+            <div class="bgcolor_000 pb50">
+                <div class="w1240 text_center footer2_wrap">
+                    <ul class="footer2 f18 pt30 ltc mb30">
+                        <!--{block/1033}-->
+                    </ul>
+                    <p class="color_orange f12"><span class="d-in-black">Copyright©2009-2018</span><span class="d-in-black">北京赛普力量教育科技有限公司.All Rights Reserved</span></p>
+                    <p class="color_orange f12 mt10"><span class="d-in-black">公司地址：北京市大兴区金苑路甲15号6幢1层A106室</span><span class="d-in-black">办公电话：010-60211666</span></p>
+                    <p class="color_orange f12 mt10"><span class="d-in-black">京ICP备16035765号-3</span></p>
+                </div>
+            </div>
+        </el-col>
+    </el-row>
+</div>
+<script>
+    let urlBase = "/ind/";
+    let app = new Vue({
+        el: "#app",
+        data: {
+            activeIndex: '2',
+            isCollapse:true,
+            user:{'username':'张三'},
+            num: 0,
+            isgoods: true,
+            options:addlist,
+            address1:[],
+            address2:"",
+            ddinfo: [],
+            multipleSelection: [],
+
+        },
+        created(){
+            this.user = sessionStorage.getItem("account") ? JSON.parse(sessionStorage.getItem("account")) : {};
+            this.ddinfo = sessionStorage.getItem("multipleSelection") ? JSON.parse(sessionStorage.getItem("multipleSelection")) : {};
+        },
+        methods: {
+            settlement(){
+                if(this.address1.length==0){
+                    this.$message({
+                        message: "请选择前置地址！",
+                        type: "error"
+                    });
+                    return
+                }
+                if(this.address2 == ""){
+                    this.$message({
+                        message: "请输入详细地址！",
+                        type: "error"
+                    });
+                    return
+                }
+                $.get(urlBase+"settlement?totalcost="+this.checkPrice+"&address1="+this.address1+"&address2="+this.address2).then(res =>{
+                    $.ajax({
+                        url: urlBase+"savedetail?invCode="+res,
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(this.ddinfo)
+                    }).then(res => {
+
+                        this.$message({
+                            message: res.data,
+                            type: "success"
+                        })
+                        let cartnum = sessionStorage.getItem("cartnum") * 1;
+                        let number = 0
+                        this.ddinfo.forEach(item => {
+                            number += item.num
+                        })
+                        var number1 = cartnum - number;
+                        sessionStorage.setItem("cartnum", number1);
+                        setTimeout(() => {
+                            location.href= "/page/end/cart.html"
+                        }, 1000)
+                    })
+                })
+            },
+            handleSelect(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            logout(){
+                $.get("/account/logout");
+                sessionStorage.removeItem("account");
+                sessionStorage.removeItem("cartnum");
+                location.href = "/page/end/loginforuser.html";
+            },
+            addnum(index, rows){
+
+                this.ddinfo[index].num +=1
+            },
+            rednum(index, rows){
+                if(this.ddinfo[index].num>1){
+                    this.ddinfo[index].num -=1
+                }
+            },
+            handleChange(value) {
+                console.log(value);
+            },
+            deleteRow(index, rows) {
+                rows.splice(index, 1);
+            },
+            toggleSelection(rows) {
+                if (rows) {
+                    rows.forEach(row => {
+                        this.$refs.multipleTable.toggleRowSelection(row);
+                    });
+                } else {
+                    this.$refs.multipleTable.clearSelection();
+                }
+            },
+            handleSelectionChange(val) {
+                let arr = []
+                val.forEach(item => {
+                    arr.push(item.id)
+                })
+                for( let i = 0;i<this.ddinfo.length;i++){
+                    if(arr.indexOf(this.ddinfo[i].id) !== -1){
+                        this.ddinfo[i].checked="1"
+                    }else{
+                        this.ddinfo[i].checked="0"
+                    }
+                }
+
+                this.multipleSelection = val;
+            }
+        },
+        computed:{
+            checkPrice () {
+                let totalPrice = 0
+                this.ddinfo && this.ddinfo.forEach(item => {
+                    item.xj = (item.num * item.price)
+                    totalPrice += (item.num * item.price)
+                })
+                return totalPrice
+            }
+        }
+
+    })
+</script>
+</body>
+</html>

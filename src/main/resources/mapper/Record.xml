@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.RecordMapper">
+
+    <select id="getyearinfo" resultType="java.util.HashMap">
+        select max(a.modate) as modate,sum(a.motime) as sumtime from (SELECT DATE_FORMAT(modate, "%c月") as modate, motime FROM `t_record` WHERE username = #{username} and DATE_FORMAT(modate, "%y") = DATE_FORMAT(NOW(), "%y") ) a GROUP BY a.modate
+    </select>
+    <select id="gettime" resultType="java.lang.Integer">
+        select motime from t_record where username = #{username} and modate = #{date}
+    </select>
+</mapper>

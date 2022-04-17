@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.GoodsMapper">
+
+    <update id="editnumbyname" parameterType="com.example.entity.Goods">
+        update t_goods set num = #{num} where goodsname = #{goodsname}
+    </update>
+    <select id="getNum" resultType="java.util.Map">
+        select goodsname,num from t_goods
+    </select>
+    <select id="getAllNum" resultType="java.lang.Integer">
+        SELECT sum(g.num) FROM t_goods as g
+    </select>
+    <select id="getnumByName" resultType="java.lang.Integer">
+        SELECT g.num FROM t_goods g where g.goodsname = #{goodsName}
+    </select>
+    <select id="getlist" resultType="com.example.entity.Goods">
+        select * from t_goods ORDER BY RAND() limit 0,4
+    </select>
+    <select id="getAlllist" resultType="com.example.entity.Goods">
+        select * from t_goods
+    </select>
+    <select id="getUrlByName" resultType="java.lang.String">
+        select url from t_goods where goodsname = #{goodsname}
+    </select>
+</mapper>

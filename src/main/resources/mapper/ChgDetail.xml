@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ChgDetailMapper">
+
+    <select id="getByInvoiceCode" resultType="com.example.entity.ChgDetail">
+        select * from t_chg_detail where invoice_code = #{invoiceCode}
+    </select>
+    <select id="getgoods" resultType="java.util.Map">
+        select goodsname,sum(num) as snum,sum(price) as money from t_chg_detail group by goodsname
+    </select>
+</mapper>

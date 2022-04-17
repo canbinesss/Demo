@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单表管理</title>
+    <link rel="stylesheet" href="../../css/element.css">
+    <link rel="stylesheet" href="../../css/base.css">
+</head>
+<body>
+<div id="wrapper" v-cloak>
+    <el-container>
+        <el-aside :width="isCollapse ? '64px' : '200px'" style="background-color: black; transition:width .5s">
+            <div style="background-color: black; height: 60px; line-height: 60px; text-align: center;
+                color: white; font-size: 20px;">
+                <transition name="el-fade-in-linear">
+                    <span name="fade" v-show="!isCollapse"><a href="/page/end/index.html">健身管理</a></span>
+                </transition>
+            </div>
+            <el-menu :default-openeds="['1']" style="border: none;" background-color="black" text-color="#fff"
+                     active-text-color="#ffd04b"
+                     default-active="order"
+                     class="el-menu-vertical-demo" :collapse="isCollapse">
+                <a href="/page/end/index.html">
+                    <el-menu-item index="home">
+                        <i class="el-icon-data-line"></i>
+                        <span slot="title">首页</span>
+                    </el-menu-item>
+                </a>
+                <el-submenu index="1" v-if="user.permission && user.permission.length > 0">
+                    <template slot="title">
+                        <i class="el-icon-menu"></i>
+                        <span slot="title">信息管理</span>
+                    </template>
+                    <a :href="item.path" v-for="item in user.permission" :key="item.id">
+                        <el-menu-item :index="item.flag">
+                            <i class="el-icon-s-data"></i>
+                            <span slot="title">{{item.name}}</span>
+                        </el-menu-item>
+                    </a>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+        <el-container>
+            <el-header style="background-color: black; line-height: 60px; color: white;">
+                <el-row>
+                    <el-col :span="1">
+                        <i style="font-size: 22px; cursor: pointer"
+                           :class="[isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold']" @click="handleCollapse"></i>
+                    </el-col>
+                    <el-col :span="2" :offset="21" style="text-align: right">
+                        <span style="color: white; margin-right: 10px">{{user.username}}</span>
+                        <el-dropdown>
+                            <img :src=`/files/${user.avatar}`
+                                 style="width: 40px; height: 40px; margin-right: 10px; border-radius: 50%">
+                            <el-dropdown-menu slot="dropdown">
+                                <a href="/page/end/person.html"
+                                   style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">个人信息</a>
+                                <a @click="logout" href="#"
+                                   style="display:block; width: 100px;  text-align: center; color: black">退出</a>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </el-col>
+                </el-row>
+            </el-header>
+            <!-- 主体区域 -->
+            <el-main>
+                <div style="color: black; font-size: 20px; margin: 10px 0">订单表管理</div>
+                <div style="height: 1px; background-color: white"></div>
+                <el-input v-model="search" style="width: 20%;" suffix-icon="el-icon-search" placeholder="请输入名称按回车搜索"
+                          @keyup.enter.native="loadTable"></el-input>
+<!--                <el-button @click="add" type="primary" size="mini" style="margin: 10px 0">新增</el-button>-->
+                <!-- <el-button @click="exp" type="primary" size="mini" style="margin: 10px 0">导出</el-button> -->
+                <el-table
+                        :data="tableData"
+                        border
+                        style="width: 100%">
+                    <el-table-column
+                            :prop="item.prop"
+                            :label="item.label"
+                            v-for="item in props"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            fixed="right"
+                            label="操作"
+                            width="100">
+                        <template slot-scope="scope">
+                            <el-button @click="edit(scope.row)" type="text">编辑</el-button>
+                            <el-popconfirm
+                                    @onConfirm="del(scope.row.id)"
+                                    title="确定删除？"
+                            >
+                                <el-button type="text" slot="reference">删除</el-button>
+                            </el-popconfirm>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <!-- 分页 -->
+                <div style="background-color: white">
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="pageNum"
+                            :page-sizes="[5, 10, 20, 40]"
+                            :page-size="pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="total">
+                    </el-pagination>
+                </div>
+
+                <el-dialog title="订单表信息" :visible.sync="dialogFormVisible" width="30%"
+                           close-on-click-modal="false" close-on-press-escape="false" show-close="false">
+                    <el-form :model="entity">
+                        <el-form-item v-if="item.prop !== 'id'" :label="item.label" label-width="100px" v-for="item in props">
+                            <el-input :disabled="true" v-if="item.prop !== 'state'" v-model="entity[item.prop]" autocomplete="off" style="width: 80%"></el-input>
+                            <el-select  style="width: 80%" @change="change" v-model="entity[item.prop]" v-if="item.prop == 'state'" placeholder="请选择">
+                                <el-option
+                                        v-for="item in state"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="save">确 定</el-button>
+                    </div>
+                </el-dialog>
+
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+
+<script src="../../js/jquery.min.js"></script>
+<script src="../../js/vue.min.js"></script>
+<script src="../../js/element.js"></script>
+<script src="../../js/tinymce/tinymce.min.js"></script>
+<script src="../../js/base.js"></script>
+<script src="../../js/date.js"></script>
+<script src="../../js/address.js"></script>
+
+<script>
+
+    let urlBase = "/order/";
+    new Vue({
+        el: "#wrapper",
+        data: {
+            user: {},
+            tableData: [],
+            state: [{value: '待发货',label: '待发货'}, {value: '已发货', label: '已发货'},],
+            pageNum: 1,
+            pageSize: 10,
+            total: 0,
+            dialogFormVisible: false,
+            entity: {},
+            isCollapse: false,
+            search: '',
+            props: [{"label":"id","prop":"id"},{"label":"发票号","prop":"invcode"},{"label":"订单时间","prop":"orderdate"},{"label":"商品名称","prop":"goodsname"},{"label":"购买数量","prop":"goodsnum"},{"label":"购买地址","prop":"goodsacc"},{"label":"发货状态","prop":"state"},{"label":"发货时间","prop":"deliverdate"}]
+        },
+        created() {
+            this.user = sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user")) : {};
+            this.loadTable();
+        },
+        methods: {
+            change(){
+                if (this.entity.state == "待发货") {
+                    this.entity.deliverdate = ""
+                }else{
+                    this.entity.deliverdate = this.formatDate(new Date)
+                }
+            },
+            formateadd(add){
+                let address = "未知地区"
+                let arr = add.split(",")
+                console.log(arr)
+                for (let addlistElement of addlist) {
+                    if (addlistElement.value == arr[0]) {
+                        address = addlistElement.label
+                        for(let shi of addlistElement.children){
+                            if (shi.value == arr[1]) {
+                                address += shi.label
+                                for(let xian of shi.children){
+                                    if(xian.value == arr[2]){
+                                        address += xian.label
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+                address+= arr[3]
+                return address
+            },
+            formatDate(time) {
+                var date = new Date(time)
+                return formatdate(date, 'yyyy-MM-dd')  // 此处可根据自己的需要自定义想要的日期格式
+            },
+            handleCollapse() {
+                this.isCollapse = !this.isCollapse;
+            },
+            logout() {
+                $.get("/user/logout");
+                sessionStorage.removeItem("user");
+                location.href = "/page/end/login.html";
+            },
+            loadTable() {
+                $.get(urlBase + "/page?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&name=" + this.search).then(res => {
+                    let dates = res.data.records
+                    for(date of dates){
+                        date.goodsacc = this.formateadd(date.goodsacc);
+                        date.orderdate = this.formatDate(date.orderdate)
+                        if(date.orderdate =='1970-01-01'){
+                            date.orderdate=null
+                        }
+                        date.deliverdate = this.formatDate(date.deliverdate)
+                        if(date.deliverdate =='1970-01-01'){
+                            date.deliverdate=null
+                        }
+                    }
+                    this.tableData = dates
+                    this.total = res.data.total;
+                })
+            },
+            exp() {
+                window.open(urlBase + "/export");
+            },
+            handleSizeChange(pageSize) {
+                this.pageSize = pageSize;
+                this.loadTable();
+            },
+            handleCurrentChange(pageNum) {
+                this.pageNum = pageNum;
+                this.loadTable();
+            },
+            add() {
+                this.entity = {};
+                this.dialogFormVisible = true;
+            },
+            save() {
+                let type = this.entity.id ? "PUT" : "POST";
+                $.ajax({
+                    url: urlBase,
+                    type: type,
+                    contentType: "application/json",
+                    data: JSON.stringify(this.entity)
+                }).then(res => {
+                    if (res.code === '0') {
+                        this.$message({
+                            message: "保存成功",
+                            type: "success"
+                        });
+                        this.loadTable();
+                    } else {
+                        this.$message({
+                            message: res.msg,
+                            type: "error"
+                        })
+                    }
+                    this.dialogFormVisible = false;
+                })
+            },
+            edit(obj) {
+                this.entity = obj;
+                this.dialogFormVisible = true;
+            },
+            del(id) {
+                $.ajax({
+                    url: urlBase + id,
+                    type: "delete"
+                }).then(res => {
+                    if (res.code === '0') {
+                        this.$message({
+                            message: "删除成功",
+                            type: "success"
+                        })
+                        this.loadTable();
+                    } else {
+                        this.$message({
+                            message: res.msg,
+                            type: "error"
+                        })
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

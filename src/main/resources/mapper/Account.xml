@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.AccountMapper">
+
+    <select id="getUserIdNameList" resultType="com.example.entity.Account">
+        select a.id,a.username from t_account a
+    </select>
+    <select id="getVipById" resultType="com.example.entity.UserVip">
+        select * from t_user_vip where userid = #{id} and expire > NOW()
+    </select>
+</mapper>

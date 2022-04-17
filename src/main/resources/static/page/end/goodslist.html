@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课程列表</title>
+    <link rel="stylesheet" href="../../css/element.css">
+    <link rel="stylesheet" href="../../css/base.css">
+    <link rel="stylesheet" href="../../css/index2.css">
+    <style>
+        @import url("../../css/index.css");
+
+        .el-carousel__item h3 {
+            color: #475669;
+            font-size: 18px;
+            opacity: 0.75;
+            line-height: 300px;
+            margin: 0;
+        }
+
+        .el-carousel__item:nth-child(2n) {
+            background-color: #99a9bf;
+        }
+
+        .el-carousel__item:nth-child(2n+1) {
+            background-color: #d3dce6;
+        }
+
+        .el-row {
+            margin-bottom: 20px;
+        &
+        :last-child {
+            margin-bottom: 0;
+        }
+        }
+        .el-col {
+            border-radius: 4px;
+        }
+
+        .bg-purple-dark {
+            background: #99a9bf;
+        }
+
+        .bg-purple {
+            background: #d3dce6;
+        }
+
+        .bg-purple-light {
+            background: #e5e9f2;
+        }
+
+        .grid-content {
+            border-radius: 4px;
+            min-height: 36px;
+        }
+
+        .row-bg {
+            padding: 10px 0;
+            background-color: #f9fafc;
+        }
+        .el-header, .el-footer {
+            background-color: #B3C0D1;
+            color: #333;
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            background-color: #D3DCE6;
+            color: #333;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: center;
+            line-height: 160px;
+        }
+
+        body > .el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 320px;
+        }
+        .item {
+            margin-top: 10px;
+            margin-right: 40px;
+        }
+        .xf{
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            color: rgba(0,0,0,.65);
+            font-size: 14px;
+            font-variant: tabular-nums;
+            line-height: 1.5;
+            list-style: none;
+            -webkit-font-feature-settings: "tnum","tnum";
+            font-feature-settings: "tnum","tnum";
+            position: fixed;
+            right: 50px;
+            bottom: 50px;
+            z-index: 10;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<script src="../../js/echarts.min.js"></script>
+<script src="../../js/china.js"></script>
+<script src="../../js/jquery.min.js"></script>
+<script src="../../js/vue.min.js"></script>
+<script src="../../js/element.js"></script>
+<div id="app">
+    <div class="xf">
+        <div v-if="cartnum==0">
+            <el-button size="small" @click="tocart" icon="el-icon-shopping-cart-2"></el-button>
+        </div>
+        <div v-else>
+            <el-badge :value="cartnum" class="item">
+                <el-button size="small" @click="tocart" icon="el-icon-shopping-cart-2"></el-button>
+            </el-badge>
+        </div>
+    </div>
+    <el-row :gutter="24">
+        <el-col :span="24" :offset="0">
+            <el-container>
+                <el-header style="line-height: 60px;padding: 0px">
+                    <el-header style="background-color: black; line-height: 60px; color: white;">
+                        <el-row>
+                            <el-col :span="4" :offset="20" style="text-align: right">
+                                <div v-if="!login">
+                                    <a href="/page/end/loginforuser.html">登录/注册</a>
+                                </div>
+                                <div v-else>
+                                    <span style="color: white; margin-right: 10px">{{user.username}}</span>
+                                    <el-dropdown>
+                                        <img :src=`${user.avatar}`
+                                             style="width: 40px; height: 40px; margin-right: 10px; border-radius: 50%">
+                                        <el-dropdown-menu slot="dropdown">
+                                            <a href="/page/end/mine.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">个人中心</a>
+                                            <br>
+                                            <a href="/page/end/vipmoney.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">会员充值/续费</a>
+                                            <br>
+                                            <a href="/page/end/uppassword.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">修改密码</a>
+                                            <a @click="logout" href="#" class="link_1"
+                                               style="display:block; width: 100px;  text-align: center; color: #000000">退出</a>
+                                        </el-dropdown-menu>
+                                    </el-dropdown>
+                                </div>
+                            </el-col>
+                        </el-row>
+                    </el-header>
+                </el-header>
+                <el-main style="line-height: 60px;padding: 0px">
+                    <el-menu
+                            style="line-height: 60px;padding-left: 130px"
+                            :default-active="activeIndex"
+                            class="el-menu-demo"
+                            mode="horizontal"
+                            @select="handleSelect"
+                            background-color="#545c64"
+                            text-color="#fff"
+                            active-text-color="#ffd04b">
+                        <el-menu-item index="1" @click="location.href= '/page/end/ind.html'">首页</el-menu-item>
+                        <el-menu-item index="2" @click="location.href= '/page/end/goodslist.html'">商品信息</el-menu-item>
+                        <el-menu-item index="3" @click="location.href= '/page/end/coachlist.html'">教练信息</el-menu-item>
+                        <el-menu-item index="4" @click="location.href= '/page/end/videolist.html'">课程信息</el-menu-item>
+                        <el-menu-item index="5" @click="location.href= '/page/end/community.html'">网络社区</el-menu-item>
+                    </el-menu>
+                </el-main>
+            </el-container>
+        </el-col>
+    </el-row>
+    <el-row :gutter="20">
+        <el-col :span="20" :offset="2">
+            <el-container>
+                <el-header><h1>商品列表</h1></el-header>
+                <el-main>
+                    <el-row :gutter="24">
+                        <el-col style="cursor: pointer" :span="6" :offset="0" v-for="item in goods">
+                            <div @mouseover="hide(item.goodsname)" @mouseout="shows(item.goodsname)" class="grid-content">
+                                <img :src="'../..'+item.url" width="100%"  height="125px">
+                                <div style="line-height:30px">
+                                    {{item.goodsname}}
+                                </div>
+                                <div :id="item.goodsname+1" hidden style="line-height: 40px">
+                                    <el-button size="mini" @click="buy(item.id)" round>现在购买</el-button><el-button size="mini" @click="cart(item.id)" class="primary" round>加入购物车</el-button>
+                                </div>
+                                <div :id="item.goodsname+2" style="line-height: 40px">
+                                    <h1>{{item.price}}￥会员价：{{item.discount}}￥</h1>
+                                </div>
+                            </div>
+                        </el-col>
+                    </el-row>
+                </el-main>
+            </el-container>
+        </el-col>
+    </el-row>
+
+    <el-row :gutter="20">
+        <el-col :span="24" :offset="0">
+            <div class="bgcolor_000 pb50">
+                <div class="w1240 text_center footer2_wrap">
+                    <ul class="footer2 f18 pt30 ltc mb30">
+                        <!--{block/1033}-->
+                    </ul>
+                    <p class="color_orange f12"><span class="d-in-black">Copyright©2009-2018</span><span class="d-in-black">北京赛普力量教育科技有限公司.All Rights Reserved</span></p>
+                    <p class="color_orange f12 mt10"><span class="d-in-black">公司地址：北京市大兴区金苑路甲15号6幢1层A106室</span><span class="d-in-black">办公电话：010-60211666</span></p>
+                    <p class="color_orange f12 mt10"><span class="d-in-black">京ICP备16035765号-3</span></p>
+                </div>
+            </div>
+        </el-col>
+    </el-row>
+</div>
+<script>
+    let urlBase = "/ind/";
+    new Vue({
+        el: "#app",
+        data: {
+            activeIndex: '2',
+            isCollapse:true,
+            user:{'username':'张三'},
+            num: 0,
+            goods:[],
+            login:false,
+            cartnum:0
+        },
+        created(){
+            this.user = sessionStorage.getItem("account") ? JSON.parse(sessionStorage.getItem("account")) : {};
+            this.cartnum = sessionStorage.getItem("cartnum") * 1;
+            this.loadAllGoods()
+            if(this.user.username=='' || this.user.username == null){
+                this.login = false
+            }else{
+                this.login = true
+            }
+        },
+        methods: {
+            hide(name){
+                $("#"+name+"2").hide()
+                $("#"+name+"1").show()
+                // this.show = true
+            },
+            shows(name){
+                $("#"+name+"1").hide()
+                $("#"+name+"2").show()
+                // this.show = false
+            },
+            buy(id){
+                if(!this.login){
+                    this.$message({
+                        showClose: true,
+                        message: '您还没有登录，请先进行登录！',
+                        type: 'error',
+                        center: true
+                    });
+                    return;
+                }
+                this.addcart(id)
+                this.cartnum +=1
+                sessionStorage.setItem("cartnum", this.cartnum);
+                setTimeout(() => {
+                    location.href= "/page/end/cart.html"
+                }, 1000)
+            },
+            tocart(){
+                if(!this.login){
+                    this.$message({
+                        showClose: true,
+                        message: '您还没有登录，请先进行登录！',
+                        type: 'error',
+                        center: true
+                    });
+                    return;
+                }
+                setTimeout(() => {
+                    location.href= "/page/end/cart.html"
+                }, 1000)
+            },
+            cart(id){
+                if(!this.login){
+                    this.$message({
+                        showClose: true,
+                        message: '您还没有登录，请先进行登录！',
+                        type: 'error',
+                        center: true
+                    });
+                    return;
+                }
+                this.cartnum +=1
+                sessionStorage.setItem("cartnum", this.cartnum);
+                this.addcart(id)
+            },
+            addcart(id){
+                $.get(urlBase+"addcart?id="+id)
+            },
+            handleSelect(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            logout(){
+                $.get("/account/logout");
+                sessionStorage.removeItem("account");
+                sessionStorage.removeItem("cartnum");
+                location.href = "/page/end/loginforuser.html";
+            },
+            loadAllGoods(){
+                $.get(urlBase+"getAllGoods").then(res => {
+                    // console.log(res.data)
+                    this.goods = res.data;
+                })
+            }
+        },
+
+    })
+</script>
+</body>
+</html>

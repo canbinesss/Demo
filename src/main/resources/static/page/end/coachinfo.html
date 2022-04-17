@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教练信息</title>
+    <link rel="stylesheet" href="../../css/element.css">
+    <link rel="stylesheet" href="../../css/base.css">
+    <link rel="stylesheet" href="../../css/index2.css">
+    <style>
+        @import url("../../css/index.css");
+
+        .el-carousel__item h3 {
+            color: #475669;
+            font-size: 18px;
+            opacity: 0.75;
+            line-height: 300px;
+            margin: 0;
+        }
+
+        .el-carousel__item:nth-child(2n) {
+            background-color: #99a9bf;
+        }
+
+        .el-carousel__item:nth-child(2n+1) {
+            background-color: #d3dce6;
+        }
+
+        .el-row {
+            margin-bottom: 20px;
+        &
+        :last-child {
+            margin-bottom: 0;
+        }
+        }
+        .el-col {
+            border-radius: 4px;
+        }
+
+        .bg-purple-dark {
+            background: #99a9bf;
+        }
+
+        .bg-purple {
+            background: #d3dce6;
+        }
+
+        .bg-purple-light {
+            background: #e5e9f2;
+        }
+
+        .grid-content {
+            border-radius: 4px;
+            min-height: 36px;
+        }
+
+        .row-bg {
+            padding: 10px 0;
+            background-color: #f9fafc;
+        }
+        .el-header, .el-footer {
+            background-color: #B3C0D1;
+            color: #333;
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            background-color: #D3DCE6;
+            color: #333;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: center;
+            line-height: 160px;
+        }
+
+        body > .el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 320px;
+        }
+        .item {
+            margin-top: 10px;
+            margin-right: 40px;
+        }
+    </style>
+</head>
+<body>
+<script src="../../js/echarts.min.js"></script>
+<script src="../../js/china.js"></script>
+<script src="../../js/jquery.min.js"></script>
+<script src="../../js/vue.min.js"></script>
+<script src="../../js/element.js"></script>
+<div id="app">
+    <el-row :gutter="24">
+        <el-col :span="24" :offset="0">
+            <el-container>
+                <el-header style="line-height: 60px;padding: 0px">
+                    <el-header style="background-color: black; line-height: 60px; color: white;">
+                        <el-row>
+                            <el-col :span="4" :offset="20" style="text-align: right">
+                                <div v-if="!login">
+                                    <a href="/page/end/loginforuser.html">登录/注册</a>
+                                </div>
+                                <div v-else>
+                                    <span style="color: white; margin-right: 10px">{{user.username}}</span>
+                                    <el-dropdown>
+                                        <img :src=`${user.avatar}`
+                                             style="width: 40px; height: 40px; margin-right: 10px; border-radius: 50%">
+                                        <el-dropdown-menu slot="dropdown">
+                                            <a href="/page/end/mine.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">个人中心</a>
+                                            <br>
+                                            <a href="/page/end/vipmoney.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">会员充值/续费</a>
+                                            <br>
+                                            <a href="/page/end/uppassword.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">修改密码</a>
+                                            <a @click="logout" href="#" class="link_1"
+                                               style="display:block; width: 100px;  text-align: center; color: #000000">退出</a>
+                                        </el-dropdown-menu>
+                                    </el-dropdown>
+                                </div>
+
+                            </el-col>
+                        </el-row>
+                    </el-header>
+                </el-header>
+                <el-main style="line-height: 60px;padding: 0px">
+                    <el-menu
+                            style="line-height: 60px;padding-left: 130px"
+                            :default-active="activeIndex"
+                            class="el-menu-demo"
+                            mode="horizontal"
+                            @select="handleSelect"
+                            background-color="#545c64"
+                            text-color="#fff"
+                            active-text-color="#ffd04b">
+                        <el-menu-item index="1" @click="location.href= '/page/end/ind.html'">首页</el-menu-item>
+                        <el-menu-item index="2" @click="location.href= '/page/end/goodslist.html'">商品信息</el-menu-item>
+                        <el-menu-item index="3" @click="location.href= '/page/end/coachlist.html'">教练信息</el-menu-item>
+                        <el-menu-item index="4" @click="location.href= '/page/end/videolist.html'">课程信息</el-menu-item>
+                        <el-menu-item index="5" @click="location.href= '/page/end/community.html'">网络社区</el-menu-item>
+                    </el-menu>
+                </el-main>
+            </el-container>
+        </el-col>
+    </el-row>
+
+    <el-row :gutter="20">
+        <el-col :span="20" :offset="2">
+            <el-tabs tab-position="right">
+                <div style="align-items:center;display:flex;justify-content:flex-start;">
+                    <div style="width: 100%;height: 385px">
+                        <img style="width: 100%; height: 100%;" :src=`/files/${coach.avatar}` alt="">
+                    </div>
+                    <div>
+                        <el-card style="width: 500px; padding-bottom: 5px;border: none">
+                            <div slot="header" class="clearfix" style="display: flex">
+                                <div style="font-size: 24px; flex: 1">教练信息</div>
+                            </div>
+                            <div style="font-size: 18px;">
+                                <el-row style="padding: 10px 0">
+                                    <el-col :span="12" style="text-align: right">姓名：</el-col>
+                                    <el-col :span="12">{{coach.username}}</el-col>
+                                </el-row>
+                                <el-row style="padding: 10px 0">
+                                    <el-col :span="12" style="text-align: right">电话：</el-col>
+                                    <el-col :span="12">{{coach.phone}}</el-col>
+                                </el-row>
+                                <el-row style="padding: 10px 0">
+                                    <el-col :span="12" style="text-align: right">邮箱：</el-col>
+                                    <el-col :span="12">{{coach.email}}</el-col>
+                                </el-row>
+                                <el-row style="line-height: 30px; padding: 10px 0;text-align: center">
+                                    <el-button style="background-color: #00B5E5;color: #ffffff" @click="follow">关注</el-button>
+                                </el-row>
+                            </div>
+                        </el-card>
+                    </div>
+                </div>
+            </el-tabs>
+        </el-col>
+    </el-row>
+    <el-row :gutter="20">
+        <el-col :span="20" :offset="2">
+            <el-container>
+                <el-header><h1>课程列表</h1></el-header>
+                <el-main>
+                    <el-row :gutter="24">
+                        <el-col style="cursor: pointer" :span="6" :offset="0" v-for="item in courses">
+                            <div @click="coursedetail(item.id)" class="grid-content">
+                                <img  :src="item.picturerurl" width="100%"  height="125px">
+                                <div style="line-height:30px">
+                                    {{item.course}}
+                                </div>
+                            </div>
+                        </el-col>
+                    </el-row>
+                </el-main>
+            </el-container>
+        </el-col>
+    </el-row>
+    <el-row :gutter="20">
+        <el-col :span="20" :offset="2">
+            <el-container>
+                <el-header><h1>留言板</h1></el-header>
+                <el-main>
+                    <el-row :gutter="24">
+                        <el-col style="cursor: pointer" :span="24" :offset="0">
+                            <div class="grid-content">
+                                <div style="line-height:30px;display: flex">
+                                    <div style="width: 90%">
+                                        <textarea v-model="lmcentent" style="width: 95%;height: 100px"></textarea>
+                                    </div>
+                                    <div style="line-height: 70px">
+                                        <el-button style="background-color: #00B5E5;color: #ffffff" @click="fsly"> <span style="line-height: 30px">发&ensp;送 <br>留&ensp;言</span></el-button>
+                                    </div>
+                                </div>
+                                <div v-for="item in lm" style="line-height: 30px;background-color: #d2d2d2;margin-left:28px;margin-right: 150px">
+                                    <div align="left" style="margin-left: 30px">{{item.username}}：</div>
+                                    <div align="left" style="margin-left: 60px">{{item.lmcontent}}</div>
+                                    <div align="right" style="margin-right: 30px;">{{item.lmdate}}</div>
+                                    <div v-if="item.replycontent != null" align="left" style="margin-left: 60px">回复@{{item.username}}：</div>
+                                    <div v-if="item.replycontent != null" align="left" style="margin-left: 90px">{{item.replycontent}}</div>
+                                    <div v-if="item.replycontent != null" align="right" style="margin-right: 30px">{{item.replydate}}</div>
+                                    <div style="background-color: #E9EEF3;height: 5px"></div>
+                                </div>
+                            </div>
+                        </el-col>
+                    </el-row>
+                </el-main>
+            </el-container>
+        </el-col>
+    </el-row>
+    <el-row :gutter="20">
+        <el-col :span="24" :offset="0">
+            <div class="bgcolor_000 pb50">
+                <div class="w1240 text_center footer2_wrap">
+                    <ul class="footer2 f18 pt30 ltc mb30">
+                        <!--{block/1033}-->
+                    </ul>
+                    <p class="color_orange f12"><span class="d-in-black">Copyright©2009-2018</span><span class="d-in-black">北京赛普力量教育科技有限公司.All Rights Reserved</span></p>
+                    <p class="color_orange f12 mt10"><span class="d-in-black">公司地址：北京市大兴区金苑路甲15号6幢1层A106室</span><span class="d-in-black">办公电话：010-60211666</span></p>
+                    <p class="color_orange f12 mt10"><span class="d-in-black">京ICP备16035765号-3</span></p>
+                </div>
+            </div>
+        </el-col>
+    </el-row>
+</div>
+
+<script src="../../js/date.js"></script>
+<script>
+    let urlBase = "/ind/";
+    let app =  new Vue({
+        el: "#app",
+        data: {
+            activeIndex: '3',
+            isCollapse:true,
+            user:{'username':'张三'},
+            coach:{username:'张三',phone:'15998679854',email:'456@1234132.com'},
+            num: 0,
+            login:false,
+            courses:[],
+            lm:[],
+            lmcentent:""
+        },
+        created(){
+            this.user = sessionStorage.getItem("account") ? JSON.parse(sessionStorage.getItem("account")) : {};
+            let cid = sessionStorage.getItem("coach");
+            this.loadCoach(cid)
+            this.loadCourse(cid)
+            this.loadlm(cid)
+            if(this.user.username=='' || this.user.username == null){
+                this.login = false
+            }else{
+                this.login = true
+            }
+        },
+        methods: {
+            formatDate(time) {
+                var date = new Date(time)
+                return formatdate(date, 'yyyy-MM-dd hh:mm:ss')  // 此处可根据自己的需要自定义想要的日期格式
+            },
+            loadlm(cid){
+                $.get(urlBase+"loadlm?id="+cid).then(res => {
+                    let dates = res.data
+                    for(date of dates){
+                        date.lmdate = this.formatDate(date.lmdate)
+                        date.replydate = this.formatDate(date.replydate)
+                        if(date.lmdate =='1970-01-01'){
+                            date.lmdate=null
+                        }
+                        if(date.replydate =='1970-01-01'){
+                            date.replydate=null
+                        }
+                    }
+                    this.lm = dates
+                })
+            },
+            fsly(){
+                $.get(urlBase+"savelm?lm="+this.lmcentent+"&coachid="+this.coach.id+"&coachname="+this.coach.coachname).then(res => {
+                    this.lmcentent = "";
+                    this.loadlm(this.coach.id);
+                })
+            },
+            coursedetail(id){
+                if(!this.login){
+                    this.$message({
+                        showClose: true,
+                        message: '您还没有登录，请先进行登录！',
+                        type: 'error',
+                        center: true
+                    });
+                    return;
+                }
+                if(!this.user.vipfilg){
+                    this.$message({
+                        showClose: true,
+                        message: '您不是本店会员，请先注册会员！',
+                        type: 'error',
+                        center: true
+                    });
+                    return;
+                }
+                sessionStorage.setItem("video", JSON.stringify(id));
+                setTimeout(() => {
+                    location.href= "/page/end/video.html"
+                }, 1000)
+            },
+            handleSelect(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            loadCoach(id){
+                $.get(urlBase+"getCoach?id="+id).then(res => {
+                    // console.log(res.data)
+                    this.coach = res.data;
+                })
+            },
+            loadCourse(id){
+                $.get(urlBase+"getCourseByCoachId?id="+id).then(res => {
+                    // console.log(res.data)
+                    this.courses = res.data;
+                })
+            },
+            logout(){
+                $.get("/account/logout");
+                sessionStorage.removeItem("account");
+                sessionStorage.removeItem("cartnum");
+                location.href = "/page/end/loginforuser.html";
+            },
+            follow(){
+                $.ajax({
+                    url: urlBase+"follow",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(this.coach)
+                }).then(res => {
+                    if (res.code === '0') {
+                        this.$message({
+                            message: res.data,
+                            type: "success"
+                        });
+                    } else {
+                        this.$message({
+                            message: res.msg,
+                            type: "error"
+                        })
+                    }
+                })
+            },
+        },
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人中心</title>
+    <link rel="stylesheet" href="../../css/element.css">
+    <link rel="stylesheet" href="../../css/base.css">
+    <link rel="stylesheet" href="../../css/index2.css">
+    <style>
+        @import url("../../css/index.css");
+
+        .el-carousel__item h3 {
+            color: #475669;
+            font-size: 18px;
+            opacity: 0.75;
+            line-height: 300px;
+            margin: 0;
+        }
+
+        .el-carousel__item:nth-child(2n) {
+            background-color: #99a9bf;
+        }
+
+        .el-carousel__item:nth-child(2n+1) {
+            background-color: #d3dce6;
+        }
+
+        .el-row {
+            margin-bottom: 20px;
+        &
+        :last-child {
+            margin-bottom: 0;
+        }
+        }
+        .el-col {
+            border-radius: 4px;
+        }
+
+        .bg-purple-dark {
+            background: #99a9bf;
+        }
+
+        .bg-purple {
+            background: #d3dce6;
+        }
+
+        .bg-purple-light {
+            background: #e5e9f2;
+        }
+
+        .grid-content {
+            border-radius: 4px;
+            min-height: 36px;
+        }
+        .row-bg {
+            padding: 10px 0;
+            background-color: #f9fafc;
+        }
+        .el-header, .el-footer {
+            background-color: #B3C0D1;
+            color: #333;
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            background-color: #D3DCE6;
+            color: #333;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: center;
+            line-height: 160px;
+        }
+
+        body > .el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 320px;
+        }
+        .item {
+            margin-top: 10px;
+            margin-right: 40px;
+        }
+    </style>
+</head>
+<body>
+<script src="../../js/echarts.min.js"></script>
+<script src="../../js/china.js"></script>
+<script src="../../js/jquery.min.js"></script>
+<script src="../../js/vue.min.js"></script>
+<script src="../../js/element.js"></script>
+<script src="../../js/base.js"></script>
+
+<div id="app">
+    <el-row :gutter="24">
+        <el-col :span="24" :offset="0">
+            <el-container>
+                <el-header style="line-height: 60px;padding: 0px">
+                    <el-header style="background-color: black; line-height: 60px; color: white;">
+                        <el-row>
+                            <el-col :span="4" :offset="20" style="text-align: right">
+                                <div v-if="!login">
+                                    <a href="/page/end/loginforuser.html">登录/注册</a>
+                                </div>
+                                <div v-else>
+                                    <span style="color: white; margin-right: 10px">{{user.username}}</span>
+                                    <el-dropdown>
+                                        <img :src=`${user.avatar}`
+                                             style="width: 40px; height: 40px; margin-right: 10px; border-radius: 50%">
+                                        <el-dropdown-menu slot="dropdown">
+                                            <a href="/page/end/mine.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">个人中心</a>
+                                            <br>
+                                            <a href="/page/end/vipmoney.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">会员充值/续费</a>
+                                            <br>
+                                            <a href="/page/end/uppassword.html" class="link_1"
+                                               style="display:inline-block; padding: 5px 0; width: 100px; text-align: center; color: black">修改密码</a>
+                                            <a @click="logout" href="#" class="link_1"
+                                               style="display:block; width: 100px;  text-align: center; color: #000000">退出</a>
+                                        </el-dropdown-menu>
+                                    </el-dropdown>
+                                </div>
+
+                            </el-col>
+                        </el-row>
+                    </el-header>
+                </el-header>
+                <el-main style="line-height: 60px;padding: 0px">
+                    <el-menu
+                            style="line-height: 60px;padding-left: 130px"
+                            :default-active="activeIndex"
+                            class="el-menu-demo"
+                            mode="horizontal"
+                            @select="handleSelect"
+                            background-color="#545c64"
+                            text-color="#fff"
+                            active-text-color="#ffd04b">
+                        <el-menu-item index="1" @click="location.href= '/page/end/ind.html'">首页</el-menu-item>
+                        <el-menu-item index="2" @click="location.href= '/page/end/goodslist.html'">商品信息</el-menu-item>
+                        <el-menu-item index="3" @click="location.href= '/page/end/coachlist.html'">教练信息</el-menu-item>
+                        <el-menu-item index="4" @click="location.href= '/page/end/videolist.html'">课程信息</el-menu-item>
+                        <el-menu-item index="5" @click="location.href= '/page/end/community.html'">网络社区</el-menu-item>
+                    </el-menu>
+                </el-main>
+            </el-container>
+        </el-col>
+    </el-row>
+    <el-row :gutter="20">
+        <el-col :span="20" :offset="2">
+            <!-- 主体区域 -->
+            <el-main>
+                <el-card style="width: 100%;">
+                    <div slot="header" class="clearfix" style="background: url('../../images/bg1.jpeg');background-size:100% 100%;">
+                        <div v-if="user.vipfilg" style="line-height: 30px;"align="right">
+                            <span>到期时间：{{vipinfo.expire}}</span>
+                            <span>会员余额：{{vipinfo.vipmoney}}</span>
+                            <el-button style="background-color: #00B5E5;color: #ffffff"  @click="vipSignin">会员签到</el-button>
+                        </div>
+                        <div style="width: 100px; margin: 0 auto; position: relative;">
+                            <img style="width: 100px; height: 100px; border-radius: 50%; " :src=`${user.avatar}` alt="">
+                            <input @change="upload" type="file" id="avatar" style="width: 100px; height: 100px; opacity: 0; position: absolute; top: 0; left: 0">
+                        </div>
+                        <el-row style="line-height: 60px">
+                            <h1><el-col :span="24" ><div @click="edit">{{user.username}}</div></el-col></h1>
+                        </el-row>
+                    </div>
+                    <div style="font-size: 18px;display: flex">
+                        <div style="width: 25%;cursor: pointer" @click="location.href= '/page/end/coachlistforuser.html'" >我的关注</div>
+                        <div style="width: 25%;cursor: pointer" @click="location.href= '/page/end/videolistforuser.html'">我的收藏</div>
+                        <div style="width: 25%;cursor: pointer" @click="location.href= '/page/end/orderforuser.html'">我的订单</div>
+                        <div style="width: 25%;cursor: pointer" @click="location.href= '/page/end/record.html'">健身记录</div>
+                    </div>
+                </el-card>
+            </el-main>
+        </el-col>
+    </el-row>
+
+    <el-row :gutter="20">
+        <el-col :span="20" :offset="2">
+            <el-container>
+                <el-header><h1>健身记录统计分析</h1></el-header>
+                <el-main>
+                    <div style="display: flex">
+                        <div style="width: 50%">
+                            <el-card>
+                                <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+                                <div id="main" style="width: 600px;height:400px; margin: 0 auto">
+                                    dsfgsdg
+                                </div>
+                            </el-card>
+                        </div>
+                        <div style="width: 50%">
+                            <el-card>
+                                <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+                                <div id="map" style="width: 600px;height:400px; margin: 0 auto"></div>
+                            </el-card>
+                        </div>
+                    </div>
+                </el-main>
+            </el-container>
+        </el-col>
+    </el-row>
+    <el-dialog title="用户信息" :visible.sync="dialogFormVisible" width="30%"
+               close-on-click-modal="false" close-on-press-escape="false" show-close="false">
+        <el-form :model="user">
+            <el-form-item label="用户名" label-width="100px">
+                <el-input v-model="user.username" autocomplete="off" style="width: 80%"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱" label-width="100px">
+                <el-input v-model="user.email" autocomplete="off" style="width: 80%"></el-input>
+            </el-form-item>
+            <el-form-item label="电话" label-width="100px">
+                <el-input v-model="user.phone" autocomplete="off" style="width: 80%"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="save">确 定</el-button>
+        </div>
+    </el-dialog>
+    <el-row :gutter="20">
+        <el-col :span="20" :offset="2">
+            <el-container>
+                <el-header><h1>我的留言</h1></el-header>
+                <el-main>
+                    <el-row :gutter="24">
+                        <el-col style="cursor: pointer" :span="24" :offset="0">
+                            <div class="grid-content">
+                                <div v-for="item in lm" style="line-height: 30px;background-color: #d2d2d2;margin-left:28px;margin-right: 30px">
+                                    <div align="left" style="margin-left: 30px">给{{item.coachname}}的留言：</div>
+                                    <div align="left" style="margin-left: 60px">{{item.lmcontent}}</div>
+                                    <div align="right" style="margin-right: 30px;">{{item.lmdate}}</div>
+                                    <div v-if="item.replycontent != null" align="left" style="margin-left: 60px">{{item.coachname}}的回复：</div>
+                                    <div v-if="item.replycontent != null" align="left" style="margin-left: 90px">{{item.replycontent}}</div>
+                                    <div v-if="item.replycontent != null" align="right" style="margin-right: 30px">{{item.replydate}}</div>
+                                    <div style="background-color: #E9EEF3;height: 5px"></div>
+                                </div>
+                            </div>
+                        </el-col>
+                    </el-row>
+                </el-main>
+            </el-container>
+        </el-col>
+    </el-row>
+    <el-row :gutter="20">
+        <el-col :span="24" :offset="0">
+            <div class="bgcolor_000 pb50">
+                <div class="w1240 text_center footer2_wrap">
+                    <ul class="footer2 f18 pt30 ltc mb30">
+                        <!--{block/1033}-->
+                    </ul>
+                    <p class="color_orange f12"><span class="d-in-black">Copyright©2009-2018</span><span class="d-in-black">北京赛普力量教育科技有限公司.All Rights Reserved</span></p>
+                    <p class="color_orange f12 mt10"><span class="d-in-black">公司地址：北京市大兴区金苑路甲15号6幢1层A106室</span><span class="d-in-black">办公电话：010-60211666</span></p>
+                    <p class="color_orange f12 mt10"><span class="d-in-black">京ICP备16035765号-3</span></p>
+                </div>
+            </div>
+        </el-col>
+    </el-row>
+</div>
+<script src="../../js/date.js"></script>
+<script>
+    let urlBase = "/ind/"
+    let app = new Vue({
+        el: "#app",
+        data: {
+            vipinfo:{},
+            activeIndex: '0',
+            isCollapse: true,
+            user: {'username': '张三'},
+            num: 0,
+            login: false,
+            dialogFormVisible: false,
+            dialogVisible:false,
+            record:{},
+            lm:[],
+            pieOption: {
+                "title": {
+                    "text": "全年运动量统计分析(单位：小时)"
+                },
+                "legend": {
+                    "x": "left",
+                    "y": "center",
+                    "orient": "vertical",
+                    "data": []
+                },
+                "tooltip": {
+                    "show": true
+                },
+                "xAxis": null,
+                "yAxis": null,
+                "series": [
+                    {
+                        "name": "全年运动量统计分析",
+                        "type": "pie",
+                        "radius": "55%",
+                        "data": []
+                    }
+                ]
+            },
+            option:{
+                "title": {
+                    "text": "近七天运动量统计"
+                },
+                xAxis: {
+                    type: 'category',
+                    data: [],
+                    axisLabel: { interval: 0, rotate: 30 },
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [{
+                    data: [],
+                    type: 'line'
+                }]
+            }
+        },
+        mounted(){
+            this.loadEcharts();
+        },
+        created(){
+            this.user = sessionStorage.getItem("account") ? JSON.parse(sessionStorage.getItem("account")) : {};
+            this.vipinfo = sessionStorage.getItem("vipinfo") ? JSON.parse(sessionStorage.getItem("vipinfo")) : {};
+            // this.loadEcharts();
+            this.loadyear()
+            this.loadday()
+            this.loadlm()
+            if(this.user.username=='' || this.user.username == null){
+                this.login = false
+            }else{
+                this.login = true
+            }
+        },
+        filters: {
+            formatDate(time) {
+                var date = new Date(time)
+                return formatdate(date, 'yyyy-MM-dd')  // 此处可根据自己的需要自定义想要的日期格式
+            }
+        },
+        methods: {
+            formatDate(time) {
+                var date = new Date(time)
+                return formatdate(date, 'yyyy-MM-dd hh:mm:ss')  // 此处可根据自己的需要自定义想要的日期格式
+            },
+            loadlm(){
+                $.get(urlBase+"loadlmforUser").then(res => {
+                    let dates = res.data
+                    // console.log(dates)
+                    for(date of dates){
+                        date.lmdate = this.formatDate(date.lmdate)
+                        date.replydate = this.formatDate(date.replydate)
+                        if(date.lmdate =='1970-01-01'){
+                            date.lmdate=null
+                        }
+                        if(date.replydate =='1970-01-01'){
+                            date.replydate=null
+                        }
+                    }
+                    this.lm = dates
+                })
+            },
+            loadyear(){
+                $.get(urlBase+"getyear").then(res => {
+                    let datas = res.data;
+                    let arr1 = [];
+                    let arr2 = [];
+                    for (let data of datas) {
+                        arr2.push(data.modate);
+                        let obj = {};
+                        obj.name = data.modate
+                        obj.value = data.sumtime;
+                        arr1.push(obj);
+                    }
+                    this.pieOption.legend.data = arr2
+                    this.pieOption.series[0].data = arr1
+                    // 基于准备好的dom，初始化echarts实例
+                    let myChart = echarts.init(document.getElementById('main'));
+                    // 使用刚指定的配置项和数据显示图表。
+                    myChart.setOption(this.pieOption);
+                })
+            },
+            loadday(){
+                $.get(urlBase+"getday").then(res => {
+                    this.option.xAxis.data = res.data.dates;
+                    this.option.series[0].data = res.data.times;
+                    // 基于准备好的dom，初始化echarts实例
+                    let mapChart = echarts.init(document.getElementById('map'));
+                    // 使用刚指定的配置项和数据显示图表。
+                    mapChart.setOption(this.option);
+                })
+            },
+            loadEcharts() {
+                // 基于准备好的dom，初始化echarts实例
+                let myChart = echarts.init(document.getElementById('main'));
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(this.pieOption);
+                // 基于准备好的dom，初始化echarts实例
+                let mapChart = echarts.init(document.getElementById('map'));
+                // 使用刚指定的配置项和数据显示图表。
+                mapChart.setOption(this.option);
+            },
+            test(){
+              alert('666')
+            },
+            vipSignin(){
+                $.ajax({
+                    url: "/ind/vipSignin",
+                    type: "GET",
+                    contentType: "application/json"
+                }).then(res => {
+                    alert(res.data)
+                })
+            },
+            save() {
+                $.ajax({
+                    url: "/account",
+                    type: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify(this.user)
+                }).then(res => {
+                    if (res.code === '0') {
+                        this.$message({
+                            message: "保存成功",
+                            type: "success"
+                        });
+                        sessionStorage.setItem("account", JSON.stringify(this.user))
+                        this.load();
+                    } else {
+                        this.$message({
+                            message: res.msg,
+                            type: "error"
+                        })
+                    }
+                    this.dialogFormVisible = false;
+                })
+            },
+            saveinfo() {
+                $.ajax({
+                    url: "/account",
+                    type: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify(this.record)
+                }).then(res => {
+                    if (res.code === '0') {
+                        this.$message({
+                            message: "保存成功",
+                            type: "success"
+                        });
+                        sessionStorage.setItem("account", JSON.stringify(this.user))
+                        this.load();
+                    } else {
+                        this.$message({
+                            message: res.msg,
+                            type: "error"
+                        })
+                    }
+                    this.dialogFormVisible = false;
+                })
+            },
+            load() {
+                $.get("/account/detail?id=" + this.user.id).then(res => {
+                    this.user = res.data;
+                })
+            },
+            upload() {
+                let formData = new FormData();
+                formData.append("file", $("#avatar")[0].files[0])
+                $.ajax({
+                    url: '/files/upload',
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    data: formData
+                }).then(res => {
+                    if(res.code === '0') {
+                        this.$message({
+                            type: "success",
+                            message: "上传成功"
+                        });
+                        this.user.avatar = '/files/'+res.data;
+                        sessionStorage.setItem("account", JSON.stringify(this.user))
+                        // 更新用户信息
+                        $.ajax({
+                            url: '/account/upa',
+                            type: 'POST',
+                            contentType: "application/json",
+                            data: JSON.stringify(this.user)
+                        });
+                    }
+                })
+            },
+            edit() {
+                this.dialogFormVisible = true;
+            },
+            addjl() {
+                this.dialogVisible = true;
+            },
+            handleSelect(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            logout(){
+                $.get("/account/logout");
+                sessionStorage.removeItem("account");
+                sessionStorage.removeItem("cartnum");
+                location.href = "/page/end/loginforuser.html";
+            },
+        },
+
+    })
+</script>
+</body>
+</html>

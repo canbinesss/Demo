@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CoachMapper">
+    <insert id="saveFollow" parameterType="java.util.HashMap">
+        insert into t_focus(userid,coachid,tocusdate) values (#{userid},#{coachid},#{tocusdate})
+    </insert>
+    <delete id="removeFollow" parameterType="java.util.HashMap">
+        delete from t_focus where userid = #{userid} and coachid = #{coachid}
+    </delete>
+
+    <select id="getlist" resultType="java.util.HashMap">
+        select * from t_coach c,t_user u where c.coachname = u.username ORDER BY RAND() limit 0,4
+    </select>
+    <select id="getvideocoach" resultType="java.util.HashMap">
+        select * from t_coach c,t_user u where c.coachname = u.username and c.coachname = #{coachname}
+    </select>
+    <select id="getFollow" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+        select count(*) from t_focus where userid = #{userid} and coachid = #{coachid}
+    </select>
+    <select id="getCoachbyId" resultType="java.util.HashMap">
+        select * from t_coach c,t_user u where c.coachname = u.username and c.id = #{id}
+    </select>
+    <select id="getAlllist" resultType="java.util.HashMap">
+        select * from t_coach c,t_user u where c.coachname = u.username
+    </select>
+    <select id="getFollowbyUserId" resultType="java.util.Map">
+        select * from t_focus where userid = #{id}
+    </select>
+</mapper>
